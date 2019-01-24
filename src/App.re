@@ -1,9 +1,7 @@
-type todo = string;
-
-type state = {todos: list(todo)};
+type state = {todos: list(Todo.t)};
 
 type action =
-  | AddTodo(todo);
+  | AddTodo(Todo.t);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -16,9 +14,11 @@ let make = _children => {
     },
   render: self =>
     <div>
-      <Header onNewTodo={todo => self.send(AddTodo(todo))} />
       {self.state.todos != [] ?
          <Main todos={self.state.todos} /> : ReasonReact.null}
       {self.state.todos != [] ? <Footer /> : ReasonReact.null}
+      <Header
+        onNewTodo={todo => self.send(AddTodo(Todo.make(~title=todo, ())))}
+      />
     </div>,
 };

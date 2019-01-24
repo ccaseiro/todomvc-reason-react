@@ -10,7 +10,7 @@ let make = (~todos, _children) => {
            List.mapWithIndex(todos, (index, todo) =>
              <li key={string_of_int(index)}>
                <div className="view">
-                 <label> {ReasonReact.string(todo)} </label>
+                 <label> {ReasonReact.string(todo |> Todo.title)} </label>
                </div>
              </li>
            )
