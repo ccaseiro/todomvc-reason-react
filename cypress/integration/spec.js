@@ -8,7 +8,8 @@ describe("spec", () => {
     newTodo: ".new-todo",
     todoItems: ".todo-list li",
     main: ".main",
-    footer: ".footer"
+    footer: ".footer",
+    toggleAll: ".toggle-all"
   };
 
   beforeEach(() => {
@@ -84,7 +85,7 @@ describe("spec", () => {
 
       // we use as explicit assertion here about the text instead of
       // using 'contain' so we can specify the exact text of the element
-      // does not have any whitespace around it
+      // does not have any whitespace around itjkk
       cy.get(selectors.todoItems)
         .eq(0)
         .find("label")
@@ -98,7 +99,76 @@ describe("spec", () => {
     });
   });
 
-  context("Mark all as complete", () => {});
+  context("Mark all as complete", () => {
+    beforeEach(function() {
+      // This is an example of aliasing
+      // within a hook (beforeEach).
+      // Aliases will automatically persist
+      // between hooks and are available
+      // in your tests below
+      cy.createDefaultTodos().as("todos");
+    });
+
+    it("should allow me to mark all items as completed", function() {
+      // complete all todos
+      // we use 'check' instead of 'click'
+      // because that indicates our intention much clearer
+      cy.get(selectors.toggleAll).check({ force: true });
+
+      // get each todo li and ensure its class is 'completed'
+      cy.get("@todos")
+        .eq(0)
+        .should("have.class", "completed");
+      cy.get("@todos")
+        .eq(1)
+        .should("have.class", "completed");
+      cy.get("@todos")
+        .eq(2)
+        .should("have.class", "completed");
+    });
+
+    it("should allow me to clear the complete state of all items", function() {
+      // check and then immediately uncheck
+      cy.get(selectors.toggleAll).check({ force: true });
+      cy.get(selectors.toggleAll).uncheck({ force: true });
+
+      cy.get("@todos")
+        .eq(0)
+        .should("not.have.class", "completed");
+      cy.get("@todos")
+        .eq(1)
+        .should("not.have.class", "completed");
+      cy.get("@todos")
+        .eq(2)
+        .should("not.have.class", "completed");
+    });
+
+    it("complete all checkbox should update state when items are completed / cleared", function() {
+      cy.get(selectors.toggleAll).check({ force: true });
+      // this assertion is silly here IMO but
+      // it is what TodoMVC does
+      cy.get(selectors.toggleAll).should("be.checked");
+
+      // alias the first todo and then click it
+      cy.get(selectors.todoItems)
+        .eq(0)
+        .as("firstTodo")
+        .find(".toggle")
+        .uncheck({ force: true });
+
+      // reference the .toggle-all element again
+      // and make sure its not checked
+      cy.get(selectors.toggleAll).should("not.be.checked");
+
+      // reference the first todo again and now toggle it
+      cy.get("@firstTodo")
+        .find(".toggle")
+        .check({ force: true });
+
+      // assert the toggle all is checked again
+      cy.get(selectors.toggleAll).should("be.checked");
+    });
+  });
   context("Item", () => {});
   context("Editing", () => {});
   context("Counter", () => {});
