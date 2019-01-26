@@ -32,3 +32,8 @@ let updateTodo = (todo, model) => {
   ...model,
   todos: List.map(model.todos, t => Todo.id(t) == Todo.id(todo) ? todo : t),
 };
+
+let deleteTodo = (todo, model) => {
+  ...model,
+  todos: List.keep(model.todos, t => Todo.id(t) != Todo.id(todo)),
+};

@@ -14,7 +14,7 @@ let setEditFieldRef = (theRef, {ReasonReact.state}) =>
 
 let component = ReasonReact.reducerComponent("TodoItem");
 
-let make = (~todo, ~onToggle, ~onChange, _children) => {
+let make = (~todo, ~onToggle, ~onChange, ~onDestroy, _children) => {
   {
     ...component,
     initialState: () => {
@@ -69,6 +69,7 @@ let make = (~todo, ~onToggle, ~onChange, _children) => {
           <label onDoubleClick={_ => self.send(Edit)}>
             {ReasonReact.string(todo |> Todo.title)}
           </label>
+          <button className="destroy" onClick=onDestroy />
         </div>
         <input
           ref={self.handle(setEditFieldRef)}

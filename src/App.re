@@ -7,7 +7,8 @@ type action =
   | NewTodo(string)
   | Toggle(todo)
   | ToggleAll(bool)
-  | UpdateTodo(todo, string);
+  | UpdateTodo(todo, string)
+  | DeleteTodo(todo);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -34,6 +35,8 @@ let make = _children => {
                },
              ),
       })
+    | DeleteTodo(todo) =>
+      ReasonReact.Update({todos: state.todos |> TodoModel.deleteTodo(todo)})
     },
   render: self =>
     <div>
@@ -46,6 +49,7 @@ let make = _children => {
            onChangeTodo={(todo, newTitle) =>
              self.send(UpdateTodo(todo, newTitle))
            }
+           onDestroyTodo={todo => self.send(DeleteTodo(todo))}
          /> :
          ReasonReact.null}
       {self.state.todos |> TodoModel.size != 0 ? <Footer /> : ReasonReact.null}

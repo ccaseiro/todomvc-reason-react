@@ -8,3 +8,4 @@ let newTodo: (string, t) => t;
 let toggleTodo: (Todo.t(todoId), t) => t;
 let toggleAll: (bool, t) => t;
 let updateTodo: (Todo.t(todoId), t) => t;
+let deleteTodo: (Todo.t(todoId), t) => t;
