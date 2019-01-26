@@ -1,6 +1,6 @@
 type t;
 
-let make: list(Todo.t) => t;
+let make: unit => t;
 let size: t => int;
 let toList: t => list(Todo.t);
 let addTodo: (Todo.t, t) => t;

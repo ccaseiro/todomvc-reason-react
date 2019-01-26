@@ -11,7 +11,7 @@ let onToggleTodo = e => Js.log2("onToggle", e);
 
 let make = _children => {
   ...component,
-  initialState: () => {todos: TodoModel.make([])},
+  initialState: () => {todos: TodoModel.make()},
   reducer: (action: action, state: state) =>
     switch (action) {
     | AddTodo(todo) =>

@@ -1,12 +1,22 @@
 open Belt;
 
-type t = list(Todo.t);
+type t = {
+  todos: list(Todo.t),
+  sequenceId: int,
+};
 
-let make = lst => lst;
-let size = List.size;
-let toList = model => model;
-let addTodo = (todo, model) => model @ [todo];
-let toggleTodo = (todo, model) =>
-  List.map(model, t => t == todo ? Todo.toggle(t) : t);
-let toggleAll = (completed, model) =>
-  List.map(model, t => t |> Todo.setCompleted(completed));
+let make = () => {todos: [], sequenceId: 0};
+let size = model => model.todos |> List.size;
+let toList = model => model.todos;
+let addTodo = (todo, model) => {
+  todos: model.todos @ [todo],
+  sequenceId: model.sequenceId + 1,
+};
+let toggleTodo = (todo, model) => {
+  ...model,
+  todos: List.map(model.todos, t => t == todo ? Todo.toggle(t) : t),
+};
+let toggleAll = (completed, model) => {
+  ...model,
+  todos: List.map(model.todos, t => t |> Todo.setCompleted(completed)),
+};
