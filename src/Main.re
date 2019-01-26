@@ -1,7 +1,7 @@
 open Belt;
 let component = ReasonReact.statelessComponent("Main");
 
-let make = (~todos, ~onToggleTodo, ~onToggleAll, _children) => {
+let make = (~todos, ~onToggleTodo, ~onToggleAll, ~onChangeTodo, _children) => {
   let activeTodoCount =
     List.keep(todos, t => !Todo.completed(t)) |> List.size;
   {
@@ -25,23 +25,7 @@ let make = (~todos, ~onToggleTodo, ~onToggleAll, _children) => {
                  key={string_of_int(index)}
                  todo
                  onToggle={_ => onToggleTodo(todo)}
-                 /* let className = Todo.completed(todo) ? "completed" : "";
-                    <li key={string_of_int(index)} className>
-                      <div className="view">
-                        <input
-                          className="toggle"
-                          type_="checkbox"
-                          checked={todo |> Todo.completed}
-                          onChange={_ => onToggleTodo(todo)}
-                        />
-                        <label> {ReasonReact.string(todo |> Todo.title)} </label>
-                      </div>
-                      <input
-                        className="edit"
-                        value="Create a TodoMVC template"
-                        onChange={e => Js.log2("xxxx", e)}
-                      />
-                    </li>; */
+                 onChange={newTitle => onChangeTodo(todo, newTitle)}
                />
              )
              |> List.toArray,

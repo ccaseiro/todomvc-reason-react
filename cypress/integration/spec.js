@@ -7,9 +7,17 @@ describe("spec", () => {
   const selectors = {
     newTodo: ".new-todo",
     todoItems: ".todo-list li",
+    todoItemsVisible: ".todo-list li:visible",
     main: ".main",
     footer: ".footer",
     toggleAll: ".toggle-all"
+  };
+
+  const visibleTodos = () => cy.get(selectors.todoItemsVisible);
+
+  const safeBlur = $el => {
+    const event = new Event("blur", { force: true });
+    $el.get(0).dispatchEvent(event);
   };
 
   beforeEach(() => {
@@ -169,7 +177,80 @@ describe("spec", () => {
       cy.get(selectors.toggleAll).should("be.checked");
     });
   });
-  context("Item", () => {});
+
+  context("Item", () => {
+    it("should allow me to mark items as complete", function() {
+      // we are aliasing the return value of
+      // our custom command 'createTodo'
+      //
+      // the return value is the <li> in the <ul.todos-list>
+      cy.createTodo(TODO_ITEM_ONE).as("firstTodo");
+      cy.createTodo(TODO_ITEM_TWO).as("secondTodo");
+
+      cy.get("@firstTodo")
+        .find(".toggle")
+        .check();
+      cy.get("@firstTodo").should("have.class", "completed");
+
+      cy.get("@secondTodo").should("not.have.class", "completed");
+      cy.get("@secondTodo")
+        .find(".toggle")
+        .check();
+
+      cy.get("@firstTodo").should("have.class", "completed");
+      cy.get("@secondTodo").should("have.class", "completed");
+    });
+
+    it("should allow me to un-mark items as complete", function() {
+      cy.createTodo(TODO_ITEM_ONE).as("firstTodo");
+      cy.createTodo(TODO_ITEM_TWO).as("secondTodo");
+
+      cy.get("@firstTodo")
+        .find(".toggle")
+        .check();
+      cy.get("@firstTodo").should("have.class", "completed");
+      cy.get("@secondTodo").should("not.have.class", "completed");
+
+      cy.get("@firstTodo")
+        .find(".toggle")
+        .uncheck();
+      cy.get("@firstTodo").should("not.have.class", "completed");
+      cy.get("@secondTodo").should("not.have.class", "completed");
+    });
+
+    it("should allow me to edit an item", function() {
+      cy.createDefaultTodos();
+
+      visibleTodos()
+        .eq(1)
+        // TODO: fix this, dblclick should
+        // have been issued to label
+        .find("label")
+        .dblclick();
+
+      // clear out the inputs current value
+      // and type a new value
+      visibleTodos()
+        .eq(1)
+        .find(".edit")
+        .should("have.value", TODO_ITEM_TWO)
+        // clear + type text + enter key
+        .clear()
+        .type("buy some sausages{enter}")
+        .then(safeBlur);
+
+      // explicitly assert about the text value
+      visibleTodos()
+        .eq(0)
+        .should("contain", TODO_ITEM_ONE);
+      visibleTodos()
+        .eq(1)
+        .should("contain", "buy some sausages");
+      visibleTodos()
+        .eq(2)
+        .should("contain", TODO_ITEM_THREE);
+    });
+  });
   context("Editing", () => {});
   context("Counter", () => {});
   context("Clear completed button", () => {});

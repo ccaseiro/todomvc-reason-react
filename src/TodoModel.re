@@ -19,9 +19,16 @@ let newTodo = (title, model) => {
 };
 let toggleTodo = (todo, model) => {
   ...model,
-  todos: List.map(model.todos, t => t == todo ? Todo.toggle(t) : t),
+  todos:
+    List.map(model.todos, t =>
+      Todo.id(t) == Todo.id(todo) ? Todo.toggle(t) : t
+    ),
 };
 let toggleAll = (completed, model) => {
   ...model,
   todos: List.map(model.todos, t => t |> Todo.setCompleted(completed)),
+};
+let updateTodo = (todo, model) => {
+  ...model,
+  todos: List.map(model.todos, t => Todo.id(t) == Todo.id(todo) ? todo : t),
 };

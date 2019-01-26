@@ -1,13 +1,15 @@
 type state = {todos: TodoModel.t};
 
+type todoId = TodoModel.todoId;
+type todo = Todo.t(todoId);
+
 type action =
   | NewTodo(string)
-  | Toggle(Todo.t(TodoModel.todoId))
-  | ToggleAll(bool);
+  | Toggle(todo)
+  | ToggleAll(bool)
+  | UpdateTodo(todo, string);
 
 let component = ReasonReact.reducerComponent("App");
-
-let onToggleTodo = e => Js.log2("onToggle", e);
 
 let make = _children => {
   ...component,
@@ -22,6 +24,16 @@ let make = _children => {
       ReasonReact.Update({
         todos: state.todos |> TodoModel.toggleAll(completed),
       })
+    | UpdateTodo(todo, newTitle) =>
+      ReasonReact.Update({
+        todos:
+          state.todos
+          |> TodoModel.updateTodo(
+               {
+                 todo |> Todo.setTitle(newTitle);
+               },
+             ),
+      })
     },
   render: self =>
     <div>
@@ -31,6 +43,9 @@ let make = _children => {
            todos={self.state.todos |> TodoModel.toList}
            onToggleTodo={todo => self.send(Toggle(todo))}
            onToggleAll={completed => self.send(ToggleAll(completed))}
+           onChangeTodo={(todo, newTitle) =>
+             self.send(UpdateTodo(todo, newTitle))
+           }
          /> :
          ReasonReact.null}
       {self.state.todos |> TodoModel.size != 0 ? <Footer /> : ReasonReact.null}
