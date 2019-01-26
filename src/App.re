@@ -2,7 +2,7 @@ type state = {todos: TodoModel.t};
 
 type action =
   | NewTodo(string)
-  | Toggle(Todo.t)
+  | Toggle(Todo.t(TodoModel.todoId))
   | ToggleAll(bool);
 
 let component = ReasonReact.reducerComponent("App");

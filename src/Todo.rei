@@ -1,7 +1,9 @@
-type t;
+/* Implement with generic "todoId". This way model can
+   decide to use string, uid, ... */
+type t('todoId);
 
-let make: (~id: int, ~title: string, ~completed: bool) => t;
-let title: t => string;
-let completed: t => bool;
-let setCompleted: (bool, t) => t;
-let toggle: t => t;
+let make: (~id: 'todoId, ~title: string, ~completed: bool) => t('todoId);
+let title: t('todoId) => string;
+let completed: t('todoId) => bool;
+let setCompleted: (bool, t('todoId)) => t('todoId);
+let toggle: t('todoId) => t('todoId);

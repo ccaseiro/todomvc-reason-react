@@ -1,5 +1,5 @@
-type t = {
-  id: int,
+type t('todoId) = {
+  id: 'todoId,
   title: string,
   completed: bool,
 };

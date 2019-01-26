@@ -1,7 +1,11 @@
 open Belt;
 
+/* Todo.t doesn't need to know the type of its id. This way we can use
+   an incremental int or an uuid, or ... */
+type todoId = int;
+
 type t = {
-  todos: list(Todo.t),
+  todos: list(Todo.t(todoId)),
   sequenceId: int,
 };
 
