@@ -1,7 +1,7 @@
 type state = {todos: TodoModel.t};
 
 type action =
-  | AddTodo(Todo.t)
+  | NewTodo(string)
   | Toggle(Todo.t)
   | ToggleAll(bool);
 
@@ -14,8 +14,8 @@ let make = _children => {
   initialState: () => {todos: TodoModel.make()},
   reducer: (action: action, state: state) =>
     switch (action) {
-    | AddTodo(todo) =>
-      ReasonReact.Update({todos: state.todos |> TodoModel.addTodo(todo)})
+    | NewTodo(title) =>
+      ReasonReact.Update({todos: state.todos |> TodoModel.newTodo(title)})
     | Toggle(todo) =>
       ReasonReact.Update({todos: state.todos |> TodoModel.toggleTodo(todo)})
     | ToggleAll(completed) =>
@@ -25,9 +25,7 @@ let make = _children => {
     },
   render: self =>
     <div>
-      <Header
-        onNewTodo={todo => self.send(AddTodo(Todo.make(~title=todo, ())))}
-      />
+      <Header onNewTodo={title => self.send(NewTodo(title))} />
       {self.state.todos |> TodoModel.size != 0 ?
          <Main
            todos={self.state.todos |> TodoModel.toList}

@@ -1,6 +1,6 @@
 type t;
 
-let make: (~title: string, ~completed: bool=?, unit) => t;
+let make: (~id: int, ~title: string, ~completed: bool) => t;
 let title: t => string;
 let completed: t => bool;
 let setCompleted: (bool, t) => t;

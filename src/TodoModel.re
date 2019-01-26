@@ -8,8 +8,9 @@ type t = {
 let make = () => {todos: [], sequenceId: 0};
 let size = model => model.todos |> List.size;
 let toList = model => model.todos;
-let addTodo = (todo, model) => {
-  todos: model.todos @ [todo],
+let newTodo = (title, model) => {
+  todos:
+    model.todos @ [Todo.make(~id=model.sequenceId, ~title, ~completed=false)],
   sequenceId: model.sequenceId + 1,
 };
 let toggleTodo = (todo, model) => {
