@@ -10,7 +10,8 @@ describe("spec", () => {
     todoItemsVisible: ".todo-list li:visible",
     main: ".main",
     footer: ".footer",
-    toggleAll: ".toggle-all"
+    toggleAll: ".toggle-all",
+    count: "span.todo-count"
   };
 
   const visibleTodos = () => cy.get(selectors.todoItemsVisible);
@@ -365,7 +366,16 @@ describe("spec", () => {
         .should("contain", TODO_ITEM_THREE);
     });
   });
-  context("Counter", () => {});
+
+  context("Counter", () => {
+    it("should display the current number of todo items", function() {
+      cy.createTodo(TODO_ITEM_ONE);
+      cy.get(selectors.count).contains("1");
+      cy.createTodo(TODO_ITEM_TWO);
+      cy.get(selectors.count).contains("2");
+    });
+  });
+
   context("Clear completed button", () => {});
   context("Persistence", () => {});
   context("Routing", () => {});

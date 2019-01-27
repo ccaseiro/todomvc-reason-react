@@ -1,3 +1,4 @@
+open Belt;
 type state = {todos: TodoModel.t};
 
 type todoId = TodoModel.todoId;
@@ -56,7 +57,7 @@ let make = _children => {
       <Header onNewTodo={title => self.send(NewTodo(title))} />
       {self.state.todos |> TodoModel.size != 0 ?
          <Main
-           todos={self.state.todos |> TodoModel.toList}
+           todos={self.state.todos |> TodoModel.todos}
            onToggleTodo={todo => self.send(Toggle(todo))}
            onToggleAll={completed => self.send(ToggleAll(completed))}
            onChangeTodo={(todo, newTitle) =>
@@ -65,6 +66,10 @@ let make = _children => {
            onDestroyTodo={todo => self.send(DeleteTodo(todo))}
          /> :
          ReasonReact.null}
-      {self.state.todos |> TodoModel.size != 0 ? <Footer /> : ReasonReact.null}
+      {self.state.todos |> TodoModel.size != 0 ?
+         <Footer
+           count={self.state.todos |> TodoModel.activeTodos |> List.size}
+         /> :
+         ReasonReact.null}
     </div>,
 };
