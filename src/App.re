@@ -18,7 +18,9 @@ let make = _children => {
   reducer: (action: action, state: state) =>
     switch (action) {
     | NewTodo(title) =>
-      ReasonReact.Update({todos: state.todos |> TodoModel.newTodo(title)})
+      ReasonReact.Update({
+        todos: state.todos |> TodoModel.newTodo(title |> String.trim),
+      })
     | Toggle(todo) =>
       ReasonReact.Update({todos: state.todos |> TodoModel.toggleTodo(todo)})
     | ToggleAll(completed) =>
@@ -31,7 +33,7 @@ let make = _children => {
           state.todos
           |> TodoModel.updateTodo(
                {
-                 todo |> Todo.setTitle(newTitle);
+                 todo |> Todo.setTitle(newTitle |> String.trim);
                },
              ),
       })

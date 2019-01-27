@@ -251,7 +251,82 @@ describe("spec", () => {
         .should("contain", TODO_ITEM_THREE);
     });
   });
-  context("Editing", () => {});
+
+  context("Editing", () => {
+    // New commands used here:
+    // - cy.blur    https://on.cypress.io/api/blur
+
+    beforeEach(function() {
+      cy.createDefaultTodos().as("todos");
+    });
+
+    it("should hide other controls when editing", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find("label")
+        .dblclick();
+
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find(".toggle")
+        .should("not.be.visible");
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find("label")
+        .should("not.be.visible");
+    });
+
+    it("should save edits on blur", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find("label")
+        .dblclick();
+
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find(".edit")
+        .clear()
+        .type("buy some sausages")
+        // we can just send the blur event directly
+        // to the input instead of having to click
+        // on another button on the page. though you
+        // could do that its just more mental work
+        .blur();
+
+      visibleTodos()
+        .eq(0)
+        .should("contain", TODO_ITEM_ONE);
+      visibleTodos()
+        .eq(1)
+        .should("contain", "buy some sausages");
+      visibleTodos()
+        .eq(2)
+        .should("contain", TODO_ITEM_THREE);
+    });
+
+    it("should trim entered text", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find("label")
+        .dblclick();
+
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find(".edit")
+        .type("{selectall}{backspace}    buy some sausages    {enter}")
+        .then(safeBlur);
+
+      visibleTodos()
+        .eq(0)
+        .should("contain", TODO_ITEM_ONE);
+      visibleTodos()
+        .eq(1)
+        .should("contain", "buy some sausages");
+      visibleTodos()
+        .eq(2)
+        .should("contain", TODO_ITEM_THREE);
+    });
+  });
   context("Counter", () => {});
   context("Clear completed button", () => {});
   context("Persistence", () => {});

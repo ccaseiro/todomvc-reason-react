@@ -22,6 +22,7 @@ let make = (~todo, ~onToggle, ~onChange, ~onDestroy, _children) => {
       editing: false,
       editFieldRef: ref(None),
     },
+    willReceiveProps: ({state}) => {...state, editText: todo |> Todo.title},
     reducer: (action: action, state: state) =>
       switch (action) {
       | Edit =>

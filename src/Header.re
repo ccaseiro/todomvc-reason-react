@@ -15,7 +15,7 @@ let make = (~onNewTodo, _children) => {
     | EnterKeyDown =>
       ReasonReact.UpdateWithSideEffects(
         {value: ""},
-        _self => onNewTodo(String.trim(state.value)),
+        _self => onNewTodo(state.value),
       )
     },
   render: self =>

@@ -12,6 +12,7 @@ type t = {
 let make = () => {todos: [], sequenceId: 0};
 let size = model => model.todos |> List.size;
 let toList = model => model.todos;
+
 let newTodo = (title, model) => {
   todos:
     model.todos @ [Todo.make(~id=model.sequenceId, ~title, ~completed=false)],
@@ -28,6 +29,7 @@ let toggleAll = (completed, model) => {
   ...model,
   todos: List.map(model.todos, t => t |> Todo.setCompleted(completed)),
 };
+
 let updateTodo = (todo, model) => {
   ...model,
   todos: List.map(model.todos, t => Todo.id(t) == Todo.id(todo) ? todo : t),
