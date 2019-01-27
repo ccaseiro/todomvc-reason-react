@@ -342,6 +342,28 @@ describe("spec", () => {
 
       visibleTodos().should("have.length", 2);
     });
+
+    it("should cancel edits on escape", function() {
+      visibleTodos()
+        .eq(1)
+        .find("label")
+        .dblclick();
+
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find(".edit")
+        .type("{selectall}{backspace}foo{esc}");
+
+      visibleTodos()
+        .eq(0)
+        .should("contain", TODO_ITEM_ONE);
+      visibleTodos()
+        .eq(1)
+        .should("contain", TODO_ITEM_TWO);
+      visibleTodos()
+        .eq(2)
+        .should("contain", TODO_ITEM_THREE);
+    });
   });
   context("Counter", () => {});
   context("Clear completed button", () => {});

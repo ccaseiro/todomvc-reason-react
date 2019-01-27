@@ -7,6 +7,7 @@ type state = {
 type action =
   | Edit
   | Change(string)
+  | KeyDown(int)
   | Submit;
 
 let setEditFieldRef = (theRef, {ReasonReact.state}) =>
@@ -17,12 +18,15 @@ let component = ReasonReact.reducerComponent("TodoItem");
 let make = (~todo, ~onToggle, ~onChange, ~onDestroy, _children) => {
   {
     ...component,
+
     initialState: () => {
       editText: todo->Todo.title,
       editing: false,
       editFieldRef: ref(None),
     },
+
     willReceiveProps: ({state}) => {...state, editText: todo |> Todo.title},
+
     reducer: (action: action, state: state) =>
       switch (action) {
       | Edit =>
@@ -51,7 +55,16 @@ let make = (~todo, ~onToggle, ~onChange, ~onDestroy, _children) => {
           {...state, editing: false},
           self => onChange(self.state.editText),
         )
+      | KeyDown(13) => ReasonReact.SideEffects(self => self.send(Submit))
+      | KeyDown(27) =>
+        ReasonReact.Update({
+          ...state,
+          editText: Todo.title(todo),
+          editing: false,
+        })
+      | KeyDown(_) => ReasonReact.NoUpdate
       },
+
     render: self => {
       let className =
         [
@@ -78,6 +91,7 @@ let make = (~todo, ~onToggle, ~onChange, ~onDestroy, _children) => {
           value={self.state.editText}
           onChange={e => self.send(Change(e->ReactEvent.Form.target##value))}
           onBlur={_ => self.send(Submit)}
+          onKeyDown={e => self.send(KeyDown(e->ReactEvent.Keyboard.keyCode))}
         />
       </li>;
     },
