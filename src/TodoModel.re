@@ -37,11 +37,15 @@ let updateTodo = (todo, model) => {
   todos: List.map(model.todos, t => Todo.id(t) == Todo.id(todo) ? todo : t),
 };
 
+let todos = model => model.todos;
+
+let activeTodos = model => model.todos->List.keep(t => !Todo.completed(t));
+
+let completedTodos = model => model.todos->List.keep(t => Todo.completed(t));
+
 let deleteTodo = (todo, model) => {
   ...model,
   todos: List.keep(model.todos, t => Todo.id(t) != Todo.id(todo)),
 };
 
-let todos = model => model.todos;
-
-let activeTodos = model => model.todos->List.keep(t => !Todo.completed(t));
+let deleteCompleted = model => {...model, todos: activeTodos(model)};

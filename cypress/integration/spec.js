@@ -11,7 +11,8 @@ describe("spec", () => {
     main: ".main",
     footer: ".footer",
     toggleAll: ".toggle-all",
-    count: "span.todo-count"
+    count: "span.todo-count",
+    clearCompleted: ".clear-completed"
   };
 
   const visibleTodos = () => cy.get(selectors.todoItemsVisible);
@@ -376,7 +377,46 @@ describe("spec", () => {
     });
   });
 
-  context("Clear completed button", () => {});
+  context("Clear completed button", () => {
+    beforeEach(function() {
+      cy.createDefaultTodos().as("todos");
+    });
+
+    it("should display the correct text", function() {
+      cy.get("@todos")
+        .eq(0)
+        .find(".toggle")
+        .check();
+      cy.get(selectors.clearCompleted).contains("Clear completed");
+    });
+
+    it("should remove completed items when clicked", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find(".toggle")
+        .check();
+      cy.get(selectors.clearCompleted).click();
+      cy.get("@todos").should("have.length", 2);
+      cy.get("@todos")
+        .eq(0)
+        .should("contain", TODO_ITEM_ONE);
+      cy.get("@todos")
+        .eq(1)
+        .should("contain", TODO_ITEM_THREE);
+    });
+
+    it("should be hidden when there are no items that are completed", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find(".toggle")
+        .check();
+      cy.get(selectors.clearCompleted)
+        .should("be.visible")
+        .click();
+      cy.get(selectors.clearCompleted).should("not.be.visible");
+    });
+  });
+
   context("Persistence", () => {});
   context("Routing", () => {});
 });

@@ -9,7 +9,8 @@ type action =
   | Toggle(todo)
   | ToggleAll(bool)
   | UpdateTodo(todo, string)
-  | DeleteTodo(todo);
+  | DeleteTodo(todo)
+  | DeleteCompleted;
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -51,6 +52,8 @@ let make = _children => {
 
     | DeleteTodo(todo) =>
       ReasonReact.Update({todos: state.todos |> TodoModel.deleteTodo(todo)})
+    | DeleteCompleted =>
+      ReasonReact.Update({todos: state.todos |> TodoModel.deleteCompleted})
     },
   render: self =>
     <div>
@@ -68,7 +71,11 @@ let make = _children => {
          ReasonReact.null}
       {self.state.todos |> TodoModel.size != 0 ?
          <Footer
-           count={self.state.todos |> TodoModel.activeTodos |> List.size}
+           activeCount={self.state.todos |> TodoModel.activeTodos |> List.size}
+           completedCount={
+             self.state.todos |> TodoModel.completedTodos |> List.size
+           }
+           onClearCompleted={_ => self.send(DeleteCompleted)}
          /> :
          ReasonReact.null}
     </div>,
