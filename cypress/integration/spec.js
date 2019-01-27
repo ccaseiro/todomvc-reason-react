@@ -326,6 +326,22 @@ describe("spec", () => {
         .eq(2)
         .should("contain", TODO_ITEM_THREE);
     });
+
+    it("should remove the item if an empty text string was entered", function() {
+      cy.get("@todos")
+        .eq(1)
+        .find("label")
+        .dblclick();
+
+      cy.get(selectors.todoItems)
+        .eq(1)
+        .find(".edit")
+        .clear()
+        .type("{enter}")
+        .then(safeBlur);
+
+      visibleTodos().should("have.length", 2);
+    });
   });
   context("Counter", () => {});
   context("Clear completed button", () => {});

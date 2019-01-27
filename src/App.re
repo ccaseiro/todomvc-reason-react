@@ -17,10 +17,14 @@ let make = _children => {
   initialState: () => {todos: TodoModel.make()},
   reducer: (action: action, state: state) =>
     switch (action) {
-    | NewTodo(title) =>
-      ReasonReact.Update({
-        todos: state.todos |> TodoModel.newTodo(title |> String.trim),
-      })
+    | NewTodo(newTitle) =>
+      let title = String.trim(newTitle);
+      let newTodos =
+        switch (title) {
+        | "" => state.todos
+        | _ => state.todos |> TodoModel.newTodo(title)
+        };
+      ReasonReact.Update({todos: newTodos});
     | Toggle(todo) =>
       ReasonReact.Update({todos: state.todos |> TodoModel.toggleTodo(todo)})
     | ToggleAll(completed) =>
@@ -28,15 +32,22 @@ let make = _children => {
         todos: state.todos |> TodoModel.toggleAll(completed),
       })
     | UpdateTodo(todo, newTitle) =>
-      ReasonReact.Update({
-        todos:
-          state.todos
-          |> TodoModel.updateTodo(
-               {
-                 todo |> Todo.setTitle(newTitle |> String.trim);
-               },
-             ),
-      })
+      let title = String.trim(newTitle);
+      let newTodos =
+        state.todos
+        |> (
+          switch (title) {
+          | "" => TodoModel.deleteTodo(todo)
+          | _ =>
+            TodoModel.updateTodo(
+              {
+                todo |> Todo.setTitle(title |> String.trim);
+              },
+            )
+          }
+        );
+      ReasonReact.Update({todos: newTodos});
+
     | DeleteTodo(todo) =>
       ReasonReact.Update({todos: state.todos |> TodoModel.deleteTodo(todo)})
     },
